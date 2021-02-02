@@ -1,9 +1,11 @@
 package com.udacity.jdnd.course3.critter.pet;
 
+import com.udacity.jdnd.course3.critter.schedule.Schedule;
 import com.udacity.jdnd.course3.critter.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "PET")
@@ -13,6 +15,15 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "PET_ID", updatable = false, nullable = false)
     private Long id;
+
+    @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JoinColumn(name="PET_ID", nullable=false)
+    List<Schedule> scheduleList;
+
+    public Pet() {
+
+    }
 
     public Long getId() {
         return id;
@@ -66,12 +77,12 @@ public class Pet {
     @Column(length = 10, name = "PET_TYPE")
     private PetType type;
 
-    @Column
+    @Column(name="PET_NAME")
     private String name;
 
     //Mapped to customer => A customer can have many pets
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User customer;
 
     @Column(name = "DATE_OF_BIRTH")
@@ -86,7 +97,7 @@ public class Pet {
         this.notes = notes;
     }
 
-    @Column(name = "REMARKS")
+    @Column(name = "NOTES")
     private String notes;
 
 

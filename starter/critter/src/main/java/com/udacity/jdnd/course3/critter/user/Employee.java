@@ -1,7 +1,10 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.udacity.jdnd.course3.critter.schedule.Schedule;
+
 import javax.persistence.*;
 import java.time.DayOfWeek;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,8 +15,8 @@ public class Employee extends User {
 
     @ElementCollection(targetClass = EmployeeSkill.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name="SKILLS")
-    @Column(name="EMPLOYEE_SKILLS")
+    @CollectionTable(name="EMPLOYEE_SKILLS")
+    @Column(name="EMPLOYEE_SKILL_TYPE")
     private Set<EmployeeSkill> skills;
 
     @ElementCollection(targetClass = DayOfWeek.class,fetch = FetchType.EAGER)
@@ -26,6 +29,26 @@ public class Employee extends User {
         this.skills = skills;
         this.daysAvailable = daysAvailable;
     }
+
+    @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JoinColumn(name="USER_ID", nullable=false)
+    List<Schedule> scheduleList;
+
+
+    /*
+
+     @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JoinColumn(name="SCHEDULE_ID", nullable=false)
+    List<Employee> employees ;
+
+    @OneToMany(cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JoinColumn(name="SCHEDULE_ID", nullable=false)
+    List<Pet> pets ;
+     */
+
 
     public Set<EmployeeSkill> getSkills() {
         return skills;

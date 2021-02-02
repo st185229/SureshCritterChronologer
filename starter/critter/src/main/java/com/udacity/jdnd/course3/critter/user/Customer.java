@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name="CUSTOMER")
 public class Customer extends User {
 
-    @Column
+    @Column(name="CONTACT_PHONE")
     private String phoneNumber;
 
     @Column(name = "NOTES")

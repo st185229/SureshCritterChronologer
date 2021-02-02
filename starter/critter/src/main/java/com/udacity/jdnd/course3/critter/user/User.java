@@ -22,7 +22,6 @@ public abstract class User {
         this.createdOn = createdOn;
     }
 
-    @Column(name = "CREATED_ON")
     public Date getCreatedOn() {
         return createdOn;
     }
