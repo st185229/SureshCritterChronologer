@@ -8,6 +8,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
+import java.sql.Date;
 
 @Entity
 @Table(name = "CUSTOMER")
@@ -34,11 +35,35 @@ public class Customer extends User {
 
     @Column(name = "CONTACT_PHONE")
     private String phoneNumber;
-
     @Column(name = "NOTES")
     private String notes;
-
     @OneToMany(mappedBy = "customer", orphanRemoval = true)
     private final Set<Pet> petSet = new HashSet<Pet>();
+
+    @Override
+    public Date getCreatedOn() {
+        return super.getCreatedOn();
+    }
+    @Override
+    public void setCreatedOn(Date createdOn) {
+        super.setCreatedOn(createdOn);
+    }
+    @Override
+    public long getId() {
+        return super.getId();
+    }
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+    }
+
 
 }

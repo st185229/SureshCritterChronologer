@@ -8,10 +8,13 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 @Transactional
 public class UserRepository {
+
+    private final String ALL_CUSTOMERS = "SELECT customer from Customer customer";
 
     @PersistenceContext
     EntityManager entityManager;
@@ -35,4 +38,7 @@ public class UserRepository {
     }
 
 
+    public List<Customer> getAllCustomers() {
+        return entityManager.createQuery(ALL_CUSTOMERS).getResultList();
+    }
 }

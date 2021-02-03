@@ -3,6 +3,7 @@ package com.udacity.jdnd.course3.critter.domain.user;
 import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,31 @@ public class Employee extends User {
 
     public void setDaysAvailable(Set<DayOfWeek> daysAvailable) {
         this.daysAvailable = daysAvailable;
+    }
+
+    @Override
+    public Date getCreatedOn() {
+        return super.getCreatedOn();
+    }
+    @Override
+    public void setCreatedOn(Date createdOn) {
+        super.setCreatedOn(createdOn);
+    }
+    @Override
+    public long getId() {
+        return super.getId();
+    }
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+    @Override
+    public void setName(String name) {
+        super.setName(name);
     }
 
 }
