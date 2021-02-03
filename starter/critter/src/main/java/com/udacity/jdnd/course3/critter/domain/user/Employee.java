@@ -1,6 +1,6 @@
-package com.udacity.jdnd.course3.critter.user;
+package com.udacity.jdnd.course3.critter.domain.user;
 
-import com.udacity.jdnd.course3.critter.schedule.Schedule;
+import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;

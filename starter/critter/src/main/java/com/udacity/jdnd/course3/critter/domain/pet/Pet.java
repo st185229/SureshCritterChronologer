@@ -1,7 +1,7 @@
-package com.udacity.jdnd.course3.critter.pet;
+package com.udacity.jdnd.course3.critter.domain.pet;
 
-import com.udacity.jdnd.course3.critter.schedule.Schedule;
-import com.udacity.jdnd.course3.critter.user.User;
+import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
+import com.udacity.jdnd.course3.critter.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
