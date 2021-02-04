@@ -37,20 +37,6 @@ public class Employee extends User {
     List<Schedule> scheduleList;
 
 
-    /*
-
-     @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JoinColumn(name="SCHEDULE_ID", nullable=false)
-    List<Employee> employees ;
-
-    @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JoinColumn(name="SCHEDULE_ID", nullable=false)
-    List<Pet> pets ;
-     */
-
-
     public Set<EmployeeSkill> getSkills() {
         return skills;
     }

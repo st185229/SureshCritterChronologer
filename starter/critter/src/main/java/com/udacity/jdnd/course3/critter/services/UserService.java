@@ -21,4 +21,8 @@ public class UserService {
     public List<Customer> getAllCustomers() {
         return userRepository.getAllCustomers();
     }
+
+    public Customer findOwnerByPet(Long id) {
+        return userRepository.getCustomerByPetId(id);
+    }
 }

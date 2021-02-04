@@ -1,5 +1,6 @@
 package com.udacity.jdnd.course3.critter.controller;
 
+import com.udacity.jdnd.course3.critter.domain.pet.Pet;
 import com.udacity.jdnd.course3.critter.domain.user.Customer;
 import com.udacity.jdnd.course3.critter.domain.user.CustomerDTO;
 import com.udacity.jdnd.course3.critter.domain.user.EmployeeDTO;
@@ -12,6 +13,8 @@ import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Handles web requests related to Users.
@@ -42,24 +45,35 @@ public class UserController {
     public List<CustomerDTO> getAllCustomers() {
         var customers = userService.getAllCustomers();
         List<CustomerDTO> customerDTOS = customers.stream().map(customer -> {
-            CustomerDTO customerDTO = new CustomerDTO();
-            customerDTO.setId(customer.getId());
-            customerDTO.setName(customer.getName());
-            customerDTO.setPhoneNumber(customer.getPhoneNumber());
-            customerDTO.setNotes(customer.getNotes());
-            return customerDTO;
-        }).collect(Collectors.toList());
+            return getCustomerDTO(customer);
+        }).collect(toList());
         return customerDTOS;
-
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId) {
-        throw new UnsupportedOperationException();
+
+        var  savedCustomer = userService.findOwnerByPet(petId);
+
+        return getCustomerDTO(savedCustomer);
+
+    }
+
+    private CustomerDTO getCustomerDTO(Customer savedCustomer) {
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(savedCustomer.getId());
+        customerDTO.setName(savedCustomer.getName());
+        customerDTO.setPhoneNumber(savedCustomer.getPhoneNumber());
+        customerDTO.setNotes(savedCustomer.getNotes());
+        var petSet = savedCustomer.getPetSet();
+        var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
+        customerDTO.setPetIds(petIds);
+        return customerDTO;
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
+
         throw new UnsupportedOperationException();
     }
 
