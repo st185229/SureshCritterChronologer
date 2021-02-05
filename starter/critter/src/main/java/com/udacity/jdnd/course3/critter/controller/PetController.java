@@ -40,6 +40,7 @@ public class PetController {
         }
         pet.setName(petDTO.getNotes());
         pet.setNotes(petDTO.getNotes());
+        pet.setType(petDTO.getType());
         Pet savedPet = petService.save(pet);
         BeanUtils.copyProperties(savedPet,petDTO);
         return petDTO;

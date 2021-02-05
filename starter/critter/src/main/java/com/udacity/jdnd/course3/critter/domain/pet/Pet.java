@@ -82,7 +82,7 @@ public class Pet {
 
     //Mapped to customer => A customer can have many pets
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User customer;
 
     @Column(name = "DATE_OF_BIRTH")

@@ -67,7 +67,8 @@ public class UserController {
         employee.setDaysAvailable(employeeDTO.getDaysAvailable());
         employee.setSkills(employeeDTO.getSkills());
         var savedEmployee = userService.saveEmployee(employee);
-        BeanUtils.copyProperties(employee, employeeDTO);
+        BeanUtils.copyProperties(savedEmployee, employeeDTO);
+        employeeDTO.setId(employee.getId());
         return employeeDTO;
     }
 
@@ -77,6 +78,7 @@ public class UserController {
         var customerDTO = new CustomerDTO();
         var customer = userService.getCustomerById(id);
         BeanUtils.copyProperties(customer, customerDTO);
+        customerDTO.setId(customer.getId());
         return customerDTO;
 
     }
@@ -93,6 +95,7 @@ public class UserController {
         var employeeDTO = new EmployeeDTO();
         var employee =  userService.getEmployeeById(id);
         BeanUtils.copyProperties(employee, employeeDTO);
+        employeeDTO.setId(employee.getId());
         return employeeDTO;
     }
 
@@ -113,6 +116,7 @@ public class UserController {
         return availableEmployees.stream().map(employee -> {
             var employeeDTO = new EmployeeDTO();
             BeanUtils.copyProperties(employee, employeeDTO);
+            employeeDTO.setId(employee.getId());
             return employeeDTO;
         }).collect(Collectors.toList());
 
@@ -122,6 +126,7 @@ public class UserController {
     private CustomerDTO mapCustomerToDTO(Customer customer) {
         CustomerDTO customerDTO = new CustomerDTO();
         BeanUtils.copyProperties(customer, customerDTO);
+        customerDTO.setId(customer.getId());
         return customerDTO;
     }
 

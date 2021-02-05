@@ -72,17 +72,23 @@ public class UserRepository {
 
     public List<Employee> getAvailableEmployees(EmployeeRequestDTO employeeRequestDTO) {
 
-        String qlString =
+
+        String availablitySearchQl =
                 "select * from EMPLOYEE employee, USER user , EMPLOYEE_SKILLS skills\n" +
-                        "        where employee.user_id = user.user_id \n" +
-                        "        and employee.user_id =skills.employee_user_id\n" +
-                        "        and skills.employee_skill_type in :skills";
-        Query query = entityManager.createNativeQuery(qlString, Employee.class).unwrap(NativeQuery.class);
+                        "where employee.user_id = user.user_id \n" +
+                        "and employee.user_id =skills.employee_user_id \n" +
+                        "and skills.employee_skill_type in :skills \n" +
+                        "and employee.user_id NOT IN  " +
+                        "(SELECT schedule.user_id FROM SCHEDULE schedule where schedule.user_id  = employee.user_id and schedule.date = :dateRequested )";
+
+        Query query = entityManager.createNativeQuery(availablitySearchQl, Employee.class).unwrap(NativeQuery.class);
         var skillsSet = employeeRequestDTO.getSkills().stream().map(employeeSkill -> {
             String str = employeeSkill.name().replaceAll("\\[", "").replaceAll("\\]", "");
             return str;
         }).collect(Collectors.toList());
         query.setParameter("skills", Arrays.asList(skillsSet.toArray()));
+        query.setParameter("dateRequested", employeeRequestDTO.getDate());
+
         var employeeList = query.getResultList();
         return employeeList;
 
