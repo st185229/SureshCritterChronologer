@@ -104,8 +104,19 @@ public class UserController {
     }
 
     @GetMapping("/employee/availability")
-    public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+    public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
+
+
+        List<Employee> availableEmployees =
+        userService.getAvailableEmployees(employeeRequestDTO);
+
+        return availableEmployees.stream().map(employee -> {
+            var employeeDTO = new EmployeeDTO();
+            BeanUtils.copyProperties(employee, employeeDTO);
+            return employeeDTO;
+        }).collect(Collectors.toList());
+
+
     }
 
     private CustomerDTO mapCustomerToDTO(Customer customer) {

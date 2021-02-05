@@ -2,6 +2,7 @@ package com.udacity.jdnd.course3.critter.services;
 
 import com.udacity.jdnd.course3.critter.domain.user.Customer;
 import com.udacity.jdnd.course3.critter.domain.user.Employee;
+import com.udacity.jdnd.course3.critter.domain.user.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.persistence.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,5 +48,9 @@ public class UserService {
 
     public void upDateEmployeeAvailability(long employeeId, Set<DayOfWeek> daysAvailable) {
         userRepository.upDateEmployeeAvailability(employeeId,daysAvailable);
+    }
+
+    public List<Employee> getAvailableEmployees(EmployeeRequestDTO employeeRequestDTO) {
+        return userRepository.getAvailableEmployees(employeeRequestDTO);
     }
 }

@@ -4,6 +4,8 @@ import com.udacity.jdnd.course3.critter.domain.pet.Pet;
 import com.udacity.jdnd.course3.critter.domain.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.persistence.PetRepository;
 import com.udacity.jdnd.course3.critter.persistence.UserRepository;
+import com.udacity.jdnd.course3.critter.services.PetService;
+import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +19,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/pet")
 public class PetController {
 
-    private final PetRepository petRepository;
-    private final UserRepository userRepository;
+    private final PetService petService;
+    private final UserService userService;
 
-    public PetController(PetRepository petRepository, UserRepository userRepository) {
-        this.petRepository = petRepository;
-        this.userRepository = userRepository;
+    public PetController(PetService petService, UserService userService) {
+        this.petService = petService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -33,12 +35,12 @@ public class PetController {
         pet.setBirthDate(petDTO.getBirthDate());
         Long customerID = petDTO.getOwnerId();
         if(customerID != null){
-            var customer = userRepository.getCustomerById(customerID);
+            var customer = userService.getCustomerById(customerID);
             pet.setCustomer(customer);
         }
         pet.setName(petDTO.getNotes());
         pet.setNotes(petDTO.getNotes());
-        Pet savedPet = petRepository.save(pet);
+        Pet savedPet = petService.save(pet);
         BeanUtils.copyProperties(savedPet,petDTO);
         return petDTO;
     }
@@ -46,7 +48,7 @@ public class PetController {
     @GetMapping("/{petId}")
     public PetDTO getPet(@PathVariable long petId) {
 
-        Pet savedPet = petRepository.getOne(petId);
+        Pet savedPet = petService.getOne(petId);
         var petDTO = new PetDTO();
         BeanUtils.copyProperties(savedPet,petDTO);
         return petDTO;
@@ -55,7 +57,7 @@ public class PetController {
 
     @GetMapping
     public List<PetDTO> getPets(){
-        var pets = petRepository.findAll();
+        var pets = petService.findAll();
         return pets.stream().map(pet->{
             PetDTO petDTO = new PetDTO();
             BeanUtils.copyProperties(pet,petDTO);
@@ -65,6 +67,13 @@ public class PetController {
 
     @GetMapping("/owner/{ownerId}")
     public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
-        throw new UnsupportedOperationException();
+
+        List<Pet> pets = petService.getPetsByOwnerId(ownerId);
+        return pets.stream().map(pet->{
+            PetDTO petDTO = new PetDTO();
+            BeanUtils.copyProperties(pet,petDTO);
+            petDTO.setOwnerId(pet.getCustomer().getId());
+            return petDTO;
+        }).collect(Collectors.toList());
     }
 }
