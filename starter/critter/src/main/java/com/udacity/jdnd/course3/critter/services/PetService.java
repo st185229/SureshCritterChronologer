@@ -16,9 +16,8 @@ public class PetService {
     }
 
     public Pet save(Pet p) {
-        var result = petRepository.save(p);
-
-        return  result;
+        var result = petRepository.saveAndFlush(p);
+        return result;
     }
 
     public Pet getOne(long petId) {

@@ -33,15 +33,19 @@ public class UserController {
         customer.setNotes(customerDTO.getNotes());
         customer.setPhoneNumber(customerDTO.getPhoneNumber());
         var savedCustomer = userService.saveCustomer(customer);
-        return mapCustomerToDTO(savedCustomer);
+        CustomerDTO responseCustomerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(savedCustomer, responseCustomerDTO);
+        var petSet = savedCustomer.getPetSet();
+        var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
+        responseCustomerDTO.setPetIds(petIds);
+        return responseCustomerDTO;
     }
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers() {
-        var customers = userService.getAllCustomers();
-        List<CustomerDTO> customerDTOS = customers.stream().map(customer -> {
-            return getCustomerDTO(customer);
-        }).collect(toList());
-        return customerDTOS;
+       var customers = userService.getAllCustomers();
+        return customers.stream().map(this::getCustomerDTO).collect(toList());
+
+       // return userService.getAllCustomerDTOs();
     }
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId) {
@@ -67,18 +71,21 @@ public class UserController {
         employee.setDaysAvailable(employeeDTO.getDaysAvailable());
         employee.setSkills(employeeDTO.getSkills());
         var savedEmployee = userService.saveEmployee(employee);
-        BeanUtils.copyProperties(savedEmployee, employeeDTO);
-        employeeDTO.setId(employee.getId());
-        return employeeDTO;
+        EmployeeDTO responseDTO = new EmployeeDTO();
+        BeanUtils.copyProperties(savedEmployee, responseDTO);
+        responseDTO.setDaysAvailable(savedEmployee.getDaysAvailable());
+        return responseDTO;
     }
-
-
     @GetMapping("/customer/{id}")
     public CustomerDTO getCustomerById(@PathVariable long id) {
         var customerDTO = new CustomerDTO();
         var customer = userService.getCustomerById(id);
         BeanUtils.copyProperties(customer, customerDTO);
         customerDTO.setId(customer.getId());
+        var petSet = customer.getPetSet();
+        var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
+        customerDTO.setPetIds(petIds);
+
         return customerDTO;
 
     }
@@ -120,16 +127,6 @@ public class UserController {
             return employeeDTO;
         }).collect(Collectors.toList());
 
-
     }
-
-    private CustomerDTO mapCustomerToDTO(Customer customer) {
-        CustomerDTO customerDTO = new CustomerDTO();
-        BeanUtils.copyProperties(customer, customerDTO);
-        customerDTO.setId(customer.getId());
-        return customerDTO;
-    }
-
-
 
 }

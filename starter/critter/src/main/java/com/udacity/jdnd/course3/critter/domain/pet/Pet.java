@@ -2,6 +2,8 @@ package com.udacity.jdnd.course3.critter.domain.pet;
 
 import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
 import com.udacity.jdnd.course3.critter.domain.user.User;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDate;

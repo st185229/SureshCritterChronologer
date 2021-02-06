@@ -30,6 +30,8 @@ public class PetController {
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
 
+
+
         Pet pet = new Pet();
         pet.setName(petDTO.getName());
         pet.setBirthDate(petDTO.getBirthDate());
@@ -37,13 +39,17 @@ public class PetController {
         if(customerID != null){
             var customer = userService.getCustomerById(customerID);
             pet.setCustomer(customer);
+            pet.setName(petDTO.getNotes());
+            pet.setNotes(petDTO.getNotes());
+            pet.setType(petDTO.getType());
+            Pet savedPet = petService.save(pet);
+            PetDTO responseDTO = new PetDTO();
+            BeanUtils.copyProperties(savedPet,responseDTO);
+            responseDTO.setOwnerId(savedPet.getCustomer().getId());
+            return responseDTO;
         }
-        pet.setName(petDTO.getNotes());
-        pet.setNotes(petDTO.getNotes());
-        pet.setType(petDTO.getType());
-        Pet savedPet = petService.save(pet);
-        BeanUtils.copyProperties(savedPet,petDTO);
-        return petDTO;
+        throw new RuntimeException("The Pet should have an owner");
+
     }
 
     @GetMapping("/{petId}")
@@ -51,7 +57,9 @@ public class PetController {
 
         Pet savedPet = petService.getOne(petId);
         var petDTO = new PetDTO();
-        BeanUtils.copyProperties(savedPet,petDTO);
+       BeanUtils.copyProperties(savedPet,petDTO);
+        petDTO.setOwnerId(savedPet.getCustomer().getId());
+
         return petDTO;
 
     }
