@@ -23,9 +23,11 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/user")
 public class UserController {
     UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
         Customer customer = new Customer();
@@ -40,18 +42,21 @@ public class UserController {
         responseCustomerDTO.setPetIds(petIds);
         return responseCustomerDTO;
     }
+
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers() {
-       var customers = userService.getAllCustomers();
+        var customers = userService.getAllCustomers();
         return customers.stream().map(this::getCustomerDTO).collect(toList());
 
-       // return userService.getAllCustomerDTOs();
+        // return userService.getAllCustomerDTOs();
     }
+
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId) {
-        var  savedCustomer = userService.findOwnerByPet(petId);
+        var savedCustomer = userService.findOwnerByPet(petId);
         return getCustomerDTO(savedCustomer);
     }
+
     private CustomerDTO getCustomerDTO(Customer savedCustomer) {
         CustomerDTO customerDTO = new CustomerDTO();
         customerDTO.setId(savedCustomer.getId());
@@ -63,6 +68,7 @@ public class UserController {
         customerDTO.setPetIds(petIds);
         return customerDTO;
     }
+
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
 
@@ -76,6 +82,7 @@ public class UserController {
         responseDTO.setDaysAvailable(savedEmployee.getDaysAvailable());
         return responseDTO;
     }
+
     @GetMapping("/customer/{id}")
     public CustomerDTO getCustomerById(@PathVariable long id) {
         var customerDTO = new CustomerDTO();
@@ -89,6 +96,7 @@ public class UserController {
         return customerDTO;
 
     }
+
     /*
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
@@ -100,7 +108,7 @@ public class UserController {
     public EmployeeDTO getEmployeeById(@PathVariable long id) {
 
         var employeeDTO = new EmployeeDTO();
-        var employee =  userService.getEmployeeById(id);
+        var employee = userService.getEmployeeById(id);
         BeanUtils.copyProperties(employee, employeeDTO);
         employeeDTO.setId(employee.getId());
         return employeeDTO;
@@ -109,7 +117,7 @@ public class UserController {
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
 
-        userService.upDateEmployeeAvailability(employeeId,daysAvailable);
+        userService.upDateEmployeeAvailability(employeeId, daysAvailable);
 
     }
 
@@ -118,7 +126,7 @@ public class UserController {
 
 
         List<Employee> availableEmployees =
-        userService.getAvailableEmployees(employeeRequestDTO);
+                userService.getAvailableEmployees(employeeRequestDTO);
 
         return availableEmployees.stream().map(employee -> {
             var employeeDTO = new EmployeeDTO();

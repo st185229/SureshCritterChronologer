@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.persistence;
 
 import com.udacity.jdnd.course3.critter.domain.pet.Pet;
+import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
 import com.udacity.jdnd.course3.critter.domain.user.*;
 import org.hibernate.jpa.QueryHints;
 import org.hibernate.query.NativeQuery;
@@ -23,6 +24,10 @@ public class UserRepository {
     private final String ALL_CUSTOMERS = "SELECT DISTINCT customer from Customer customer";
     private final String PET_OWNER = "SELECT  pet.customer from Pet pet where pet.id = ?1";
 
+    private final String ALL_PETS_BY_OWNER = "SELECT customer.petSet from Customer customer where customer.id = ?1";
+
+    private final String ALL_SCH_BY_CUSTOMER = "SELECT schedule from Schedule schedule JOIN Pet.schedule";
+
     @PersistenceContext
     EntityManager entityManager;
     public void saveUser(User user) {
@@ -43,6 +48,14 @@ public class UserRepository {
         var query = entityManager.createQuery(ALL_CUSTOMERS,Customer.class);
         List<Customer> customers= query.getResultList();
         return customers;
+    }
+
+    public List<Schedule> getAllPetScheduleByCustomer(Long customerId) {
+        var query = entityManager.createQuery(ALL_PETS_BY_OWNER,Customer.class);
+        List<Customer> customers= query.setParameter(1,customerId).getResultList();
+
+    return null;
+
     }
 
     public Employee saveEmployee(Employee employee) {
