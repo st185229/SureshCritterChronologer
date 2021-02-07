@@ -19,6 +19,12 @@ import java.util.*;
 public class UserRepository {
     // private final String ALL_CUSTOMERS = "SELECT DISTINCT customer from Customer customer LEFT JOIN  customer.petSet ps ORDER BY ps.id";
 
+    private PetRepository petRepository;
+
+    public UserRepository(PetRepository petRepository) {
+        this.petRepository = petRepository;
+    }
+
     private final String PET_OWNER;
     {
         PET_OWNER = "SELECT  pet.customer from Pet pet where pet.id = ?1";
@@ -27,7 +33,10 @@ public class UserRepository {
     EntityManager entityManager;
     public Customer getCustomerByPetId(Long id) {
         var query = entityManager.createNativeQuery(
-                "select * from customer cust , pet pt where cust.user_id = pt.user_id and pt.pet_id= ?1", Customer.class)
+                "select * from customer cust , pet pt, user  usr " +
+                        "where cust.user_id = pt.user_id " +
+                        "and cust.user_id = usr.user_id " +
+                        "and pt.pet_id= ?1", Customer.class)
                 .setParameter(1,id);
 
         Customer customer = (Customer) query.getSingleResult();
@@ -55,8 +64,7 @@ public class UserRepository {
         String ALL_CUSTOMERS = "SELECT DISTINCT customer from Customer customer";
         var query = entityManager.createQuery(ALL_CUSTOMERS, Customer.class);
         var customers =  query.getResultList();
-
-
+        for( Customer customer:customers) customer.setPetSet(new HashSet<>(petRepository.getPetsByOwnerId(customer.getId())));
         return customers;
 
     }
@@ -84,30 +92,26 @@ public class UserRepository {
         entityManager.flush();
     }
     public List<Employee> getAvailableEmployees(EmployeeRequestDTO employeeRequestDTO) {
-        String availabilitySearchQl =
-                "select * from EMPLOYEE employee, USER user , EMPLOYEE_SKILLS skills\n" +
-                        "where employee.user_id = user.user_id \n" +
-                        "and employee.user_id =skills.employee_user_id \n" +
-                        "and skills.employee_skill_type in :skills \n" +
-                        "and employee.user_id NOT IN  " +
-                        "(SELECT schedule.user_id FROM SCHEDULE schedule where schedule.user_id  = employee.user_id and schedule.date = :dateRequested )";
+        String availabilitySearchQl ="select * from EMPLOYEE employee, USER user , EMPLOYEE_SKILLS skills, DAYS_OF_WEEK dow " +
+                "where employee.user_id = user.user_id and employee.user_id =skills.employee_user_id and employee.user_id = dow.employee_user_id " +
+                "and skills.employee_skill_type in :skills " +
+                "and UPPER(DAYNAME(:dateRequested)) in (dow.available_days) " +
+                "and employee.user_id NOT IN " +
+                "(SELECT empsch.user_id FROM employee_schedule empsch, schedule sch  " +
+                "where empsch.user_id  = employee.user_id and empsch.schedule_id = sch.schedule_id and sch.date = :dateRequested)";
 
         Query query = entityManager.createNativeQuery(availabilitySearchQl, Employee.class).unwrap(NativeQuery.class);
-        var skillsSet = new ArrayList<>();
-        for (EmployeeSkill employeeSkill : employeeRequestDTO.getSkills()) {
-            String s = employeeSkill.name().replaceAll("\\[", "").replaceAll("\\]", "");
-            skillsSet.add(s);
-        }
-        query.setParameter("skills", Arrays.asList(skillsSet.toArray()));
+        query.setParameter("skills", Arrays.asList(employeeRequestDTO.getSkills().stream().map
+                (employeeSkill -> employeeSkill.name().replaceAll("\\[", "").replaceAll("\\]", "")).toArray()));
         query.setParameter("dateRequested", employeeRequestDTO.getDate());
-        var employeeList = query.getResultList();
-        return employeeList;
+        List<Employee> employees= query.getResultList();
+
+        // Check for available days
+
+
+
+
+        return employees;
     }
-    public List getAllCustomersALT() {
-        String customerQuery = "select  * from customer customer0_  inner join user customer0_1_  on customer0_.user_id=customer0_1_.user_id  " +
-                "left outer join pet petset1_  on customer0_.user_id=petset1_.user_id  order by petset1_.pet_id";
-        Query query = entityManager.createNativeQuery(customerQuery, Customer.class).unwrap(NativeQuery.class);
-        var customerList = query.getResultList();
-        return customerList;
-    }
+
 }

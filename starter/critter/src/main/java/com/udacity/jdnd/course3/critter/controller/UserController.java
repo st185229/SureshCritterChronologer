@@ -52,9 +52,8 @@ public class UserController {
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers() {
         var customers = userService.getAllCustomers();
-        return customers.stream().map(this::getCustomerDTO).collect(toList());
-
-        // return userService.getAllCustomerDTOs();
+        var customerDTOS = customers.stream().map(this::getCustomerDTO).collect(toList());
+        return customerDTOS;
     }
 
     @GetMapping("/customer/pet/{petId}")

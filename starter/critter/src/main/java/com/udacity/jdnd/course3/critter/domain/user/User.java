@@ -32,6 +32,7 @@ public abstract class User {
     @Column(name = "USER_NAME")
     @Basic(optional = false)
     private String name;
+
     @CreationTimestamp
     @Column(name = "CREATED_ON")
     private Date createdOn;

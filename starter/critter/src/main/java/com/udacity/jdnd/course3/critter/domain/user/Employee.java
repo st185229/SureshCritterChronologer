@@ -44,14 +44,6 @@ public class Employee extends User {
         this.daysAvailable = daysAvailable;
     }
 
-
-
-   /* @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "EMPLOYEE_SCHEDULE",
-            joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SCHEDULE_ID"))*/
-
     @ManyToMany(mappedBy = "employees",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Set<Schedule> employeesScheduleSet ;
 

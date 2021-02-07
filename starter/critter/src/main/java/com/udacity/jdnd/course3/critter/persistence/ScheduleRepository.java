@@ -72,15 +72,6 @@ public class ScheduleRepository {
         return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
 
     }
-    /*public Optional<List<Schedule>>  getScheduleForCustomer(Long customerID){
-        var searchScheduleQuery  = entityManager.createQuery("select schedule from Schedule schedule, Customer cust, Pet pets where " +
-                "schedule.pets = pets and pets.customer = cust and cust.id=?1" );
-
-        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1,customerID);
-        List<Schedule> schedules = parameterisedSearchQuery.getResultList();
-        return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
-
-    }*/
     public Optional<List<Schedule>>  getScheduleForCustomer(Long customerID){
         var searchScheduleQuery  = entityManager.createNativeQuery(
                 "select sh.* from schedule sh, pet_schedule ps, pet pt, customer cust " +
