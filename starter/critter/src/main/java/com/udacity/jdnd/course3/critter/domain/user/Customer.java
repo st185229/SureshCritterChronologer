@@ -5,9 +5,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.sql.Date;
 
 @Entity
 @Table(name = "CUSTOMER")
@@ -36,30 +36,35 @@ public class Customer extends User {
     private String phoneNumber;
     @Column(name = "NOTES")
     private String notes;
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Fetch(value= FetchMode.SELECT)
-    private Set<Pet> petSet = new HashSet<Pet>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.SELECT)
+    private final Set<Pet> petSet = new HashSet<>();
 
     @Override
     public Date getCreatedOn() {
         return super.getCreatedOn();
     }
+
     @Override
     public void setCreatedOn(Date createdOn) {
         super.setCreatedOn(createdOn);
     }
+
     @Override
     public long getId() {
         return super.getId();
     }
+
     @Override
     public void setId(Long id) {
         super.setId(id);
     }
+
     @Override
     public String getName() {
         return super.getName();
     }
+
     @Override
     public void setName(String name) {
         super.setName(name);

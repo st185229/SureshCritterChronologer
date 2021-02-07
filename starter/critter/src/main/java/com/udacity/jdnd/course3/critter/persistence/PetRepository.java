@@ -16,6 +16,6 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
     @Query("SELECT pet FROM Pet pet WHERE pet.customer.id = ?1")
     List<Pet> getPetsByOwnerId(Long ownerId);
 
-    @Query("SELECT pet.scheduleList from Pet pet where pet.id = :#{#petId}")
+    @Query("SELECT pet.petsScheduleSet from Pet pet where pet.id = :#{#petId}")
     List<Schedule> getScheduleForPet(@Param ("petId") Long petId);
 }

@@ -10,10 +10,9 @@ import java.sql.Date;
         strategy = InheritanceType.JOINED)
 @Table(name = "USER")
 public abstract class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="USER_ID")
+    @Column(name = "USER_ID")
     private Long id;
 
     public User(Long id, String name, Date createdOn) {
@@ -33,28 +32,32 @@ public abstract class User {
     @Column(name = "USER_NAME")
     @Basic(optional = false)
     private String name;
-
     @CreationTimestamp
     @Column(name = "CREATED_ON")
     private Date createdOn;
 
     public User() {
-        id=null;
+        id = null;
         name = "";
     }
+
     public User(Long id, String name) {
         this.id = id;
         this.name = name;
     }
+
     public long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }

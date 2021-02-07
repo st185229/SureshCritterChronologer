@@ -5,13 +5,26 @@ import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.DayOfWeek;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name="EMPLOYEE")
 public class Employee extends User {
+    public Set<Schedule> getScheduleSet() {
+        return employeesScheduleSet;
+    }
+
+    public void setScheduleSet(Set<Schedule> scheduleSet) {
+        this.employeesScheduleSet = scheduleSet;
+    }
+
     public Employee() {
+    }
+    public Employee(Long id) {
+        super.setId(id);
+        this.setId(id);
     }
 
     @ElementCollection(targetClass = EmployeeSkill.class, fetch = FetchType.EAGER)
@@ -31,28 +44,29 @@ public class Employee extends User {
         this.daysAvailable = daysAvailable;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JoinColumn(name="USER_ID", nullable=false)
-    List<Schedule> scheduleList;
 
+
+   /* @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "EMPLOYEE_SCHEDULE",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SCHEDULE_ID"))*/
+
+    @ManyToMany(mappedBy = "employees",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private Set<Schedule> employeesScheduleSet ;
 
     public Set<EmployeeSkill> getSkills() {
         return skills;
     }
-
     public void setSkills(Set<EmployeeSkill> skills) {
         this.skills = skills;
     }
-
     public Set<DayOfWeek> getDaysAvailable() {
         return daysAvailable;
     }
-
     public void setDaysAvailable(Set<DayOfWeek> daysAvailable) {
         this.daysAvailable = daysAvailable;
     }
-
     @Override
     public Date getCreatedOn() {
         return super.getCreatedOn();
@@ -77,5 +91,4 @@ public class Employee extends User {
     public void setName(String name) {
         super.setName(name);
     }
-
 }

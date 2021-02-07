@@ -9,44 +9,42 @@ import com.udacity.jdnd.course3.critter.persistence.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final PetRepository petRepository;
-    private final EmployeeRepository employeeRepository;
-    public final UserRepository userRepository;
+
 
     public ScheduleService(ScheduleRepository scheduleRepository, PetRepository petRepository, EmployeeRepository employeeRepository, UserRepository userRepository) {
         this.scheduleRepository = scheduleRepository;
-        this.petRepository = petRepository;
-        this.employeeRepository = employeeRepository;
-        this.userRepository = userRepository;
+
     }
 
-    public Schedule createSchedule(Schedule schedule) {
+    public Optional<Schedule> createSchedule(Schedule schedule) {
 
-        var result = scheduleRepository.saveAndFlush(schedule);
-        return result;
+        var result = scheduleRepository.save(schedule);
+        return schedule != null ? Optional.of(schedule) : Optional.empty();
     }
 
     public List<Schedule> getAllSchedules() {
         return scheduleRepository.findAll();
     }
-    public List<Schedule> getScheduleForPet( long petId) {
 
-        return petRepository.getScheduleForPet(petId);
+    public Optional<List<Schedule>> getScheduleForPet( long petId) {
+
+        return  scheduleRepository.getScheduleForPet(petId);
     }
 
 
-    public List<Schedule> getScheduleForEmployee(long employeeId) {
-       return employeeRepository.getScheduleForEmployee(employeeId);
+    public Optional<List<Schedule>> getScheduleForEmployee(long employeeId) {
+       return scheduleRepository.getScheduleForEmployee(employeeId);
     }
 
 
-    public List<Schedule> getScheduleForCustomer( long customerId) {
-      return null;
+    public Optional<List<Schedule>> getScheduleForCustomer( long customerId) {
+      return scheduleRepository.getScheduleForCustomer(customerId);
 
 
     }

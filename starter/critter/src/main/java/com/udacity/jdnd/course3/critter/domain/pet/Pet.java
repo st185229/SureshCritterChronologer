@@ -7,24 +7,40 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "PET")
 public class Pet {
 
+    public Set<Schedule> getScheduleSet() {
+        return petsScheduleSet;
+    }
+
+    public void setScheduleSet(Set<Schedule> scheduleSet) {
+        this.petsScheduleSet = scheduleSet;
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "PET_ID", updatable = false, nullable = false)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JoinColumn(name="PET_ID", nullable=false)
-    List<Schedule> scheduleList;
+   /* @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "PET_SCHEDULE",
+            joinColumns = @JoinColumn(name = "PET_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SCHEDULE_ID"))*/
+    @ManyToMany(mappedBy = "pets",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private Set<Schedule> petsScheduleSet ;
 
     public Pet() {
 
+    }
+    public Pet(Long id) {
+        this.id=id;
     }
 
     public Long getId() {

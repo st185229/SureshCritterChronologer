@@ -14,7 +14,7 @@ import java.util.List;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
 
-    @Query("SELECT employee.scheduleList from Employee employee where employee.id = :#{#employeeId}")
+    @Query("SELECT employee.employeesScheduleSet from Employee employee where employee.id = :#{#employeeId}")
     List<Schedule> getScheduleForEmployee(@Param("employeeId")  long employeeId);
 }
 
