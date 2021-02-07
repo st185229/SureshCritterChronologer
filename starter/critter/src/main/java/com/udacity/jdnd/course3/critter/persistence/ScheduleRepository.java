@@ -31,8 +31,7 @@ public class ScheduleRepository {
         return schedule != null ? Optional.of(schedule) : Optional.empty();
     }
     public List<Schedule> findAll() {
-        var response =  entityManager.createQuery("select sch from Schedule sch",Schedule.class).getResultList();
-        return response;
+        return entityManager.createQuery("select sch from Schedule sch",Schedule.class).getResultList();
     }
     public void deleteById(Integer id) {
         // Retrieve the movie with this ID
@@ -73,9 +72,19 @@ public class ScheduleRepository {
         return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
 
     }
-    public Optional<List<Schedule>>  getScheduleForCustomer(Long customerID){
-        var searchScheduleQuery  = entityManager.createQuery("select schedule from Schedule schedule, Customer cust, Pet pets where schedule.pets = pets and pets.customer = cust and cust.id=?1" );
+    /*public Optional<List<Schedule>>  getScheduleForCustomer(Long customerID){
+        var searchScheduleQuery  = entityManager.createQuery("select schedule from Schedule schedule, Customer cust, Pet pets where " +
+                "schedule.pets = pets and pets.customer = cust and cust.id=?1" );
 
+        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1,customerID);
+        List<Schedule> schedules = parameterisedSearchQuery.getResultList();
+        return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
+
+    }*/
+    public Optional<List<Schedule>>  getScheduleForCustomer(Long customerID){
+        var searchScheduleQuery  = entityManager.createNativeQuery(
+                "select sh.* from schedule sh, pet_schedule ps, pet pt, customer cust " +
+                        "where sh.schedule_id = ps.schedule_id and pt.pet_id = ps.pet_id and pt.user_id = cust.user_id and cust.user_id = ?1", Schedule.class);
         var parameterisedSearchQuery = searchScheduleQuery.setParameter(1,customerID);
         List<Schedule> schedules = parameterisedSearchQuery.getResultList();
         return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
@@ -83,5 +92,3 @@ public class ScheduleRepository {
     }
 
 }
-
-   // select schedule from Schedule schedule, Customer cust, Pet pets where schedule.pets = pets and pets.customer = cust and cust.id=?1

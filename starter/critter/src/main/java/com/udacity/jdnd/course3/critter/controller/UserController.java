@@ -36,10 +36,16 @@ public class UserController {
         customer.setPhoneNumber(customerDTO.getPhoneNumber());
         var savedCustomer = userService.saveCustomer(customer);
         CustomerDTO responseCustomerDTO = new CustomerDTO();
-        BeanUtils.copyProperties(savedCustomer, responseCustomerDTO);
+
         var petSet = savedCustomer.getPetSet();
-        var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
-        responseCustomerDTO.setPetIds(petIds);
+        if(petSet != null && petSet.size() >0){
+            var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
+            responseCustomerDTO.setPetIds(petIds);
+        }
+        responseCustomerDTO.setPhoneNumber(savedCustomer.getPhoneNumber());
+        responseCustomerDTO.setNotes(savedCustomer.getNotes());
+        responseCustomerDTO.setName(savedCustomer.getName());
+        responseCustomerDTO.setId(savedCustomer.getId());
         return responseCustomerDTO;
     }
 
@@ -54,7 +60,9 @@ public class UserController {
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId) {
         var savedCustomer = userService.findOwnerByPet(petId);
-        return getCustomerDTO(savedCustomer);
+
+        CustomerDTO responseDTO = getCustomerDTO(savedCustomer);
+        return responseDTO;
     }
 
     private CustomerDTO getCustomerDTO(Customer savedCustomer) {
@@ -64,8 +72,10 @@ public class UserController {
         customerDTO.setPhoneNumber(savedCustomer.getPhoneNumber());
         customerDTO.setNotes(savedCustomer.getNotes());
         var petSet = savedCustomer.getPetSet();
-        var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
-        customerDTO.setPetIds(petIds);
+        if(petSet != null && petSet.size()>0){
+            var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
+            customerDTO.setPetIds(petIds);
+        }
         return customerDTO;
     }
 

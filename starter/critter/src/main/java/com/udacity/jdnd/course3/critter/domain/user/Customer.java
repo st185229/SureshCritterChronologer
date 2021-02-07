@@ -32,13 +32,18 @@ public class Customer extends User {
         return petSet;
     }
 
+    public void setPetSet(Set<Pet> petSet) {
+        this.petSet = petSet;
+    }
+
     @Column(name = "CONTACT_PHONE")
     private String phoneNumber;
+
     @Column(name = "NOTES")
     private String notes;
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    @Fetch(value = FetchMode.SELECT)
-    private final Set<Pet> petSet = new HashSet<>();
+
+    @OneToMany(mappedBy = "customer")
+    private  Set<Pet> petSet;
 
     @Override
     public Date getCreatedOn() {
