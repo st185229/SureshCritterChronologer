@@ -1,10 +1,7 @@
 package com.udacity.jdnd.course3.critter.services;
 
 import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
-import com.udacity.jdnd.course3.critter.persistence.EmployeeRepository;
-import com.udacity.jdnd.course3.critter.persistence.PetRepository;
 import com.udacity.jdnd.course3.critter.persistence.ScheduleRepository;
-import com.udacity.jdnd.course3.critter.persistence.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +13,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
 
-    public ScheduleService(ScheduleRepository scheduleRepository, PetRepository petRepository, EmployeeRepository employeeRepository, UserRepository userRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository) {
         this.scheduleRepository = scheduleRepository;
 
     }

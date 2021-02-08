@@ -37,28 +37,6 @@ public class ScheduleRepository {
         return entityManager.createQuery("select sch from Schedule sch", Schedule.class).getResultList();
     }
 
-    public void deleteById(Integer id) {
-        // Retrieve the movie with this ID
-        Schedule schedule = entityManager.find(Schedule.class, id);
-        if (schedule != null) {
-            try {
-                // Start a transaction because we're going to change the database
-                entityManager.getTransaction().begin();
-
-                // Remove all references to this movie by superheroes
-                schedule.getPets().forEach(pet -> pet.getScheduleSet().remove(schedule));
-
-                // Now remove the movie
-                entityManager.remove(schedule);
-
-                // Commit the transaction
-                entityManager.getTransaction().commit();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public Optional<List<Schedule>> getScheduleForPet(Long petId) {
 
         var searchScheduleQuery = entityManager.createQuery("select schedule from Schedule schedule join fetch schedule.pets pc where pc.id =?1", Schedule.class);

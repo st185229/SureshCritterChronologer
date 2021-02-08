@@ -5,6 +5,7 @@ import com.udacity.jdnd.course3.critter.exception.EntityNotFoundException;
 import com.udacity.jdnd.course3.critter.persistence.PetRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -16,6 +17,7 @@ public class PetService {
         this.petRepository = petRepository;
     }
 
+    @Transactional
     public Pet save(Pet p) {
         AtomicReference<Pet> result = new AtomicReference<>(petRepository.saveAndFlush(p));
         return result.get();
