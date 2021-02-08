@@ -9,7 +9,10 @@ import com.udacity.jdnd.course3.critter.services.ScheduleService;
 import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Handles web requests related to Schedules.
@@ -48,7 +51,7 @@ public class ScheduleController {
         var responseScheduleOptional = scheduleService.createSchedule(schedule);
         var scheduleResponseDTO = new ScheduleDTO();
 
-        if(responseScheduleOptional.isPresent()){
+        if (responseScheduleOptional.isPresent()) {
             var responseSchedule = responseScheduleOptional.get();
             scheduleResponseDTO.setActivities(responseSchedule.getActivities());
             scheduleResponseDTO.setDate(responseSchedule.getDate());
@@ -64,15 +67,13 @@ public class ScheduleController {
             scheduleResponseDTO.setPetIds(petIds);
             return scheduleResponseDTO;
         }
-       return new ScheduleDTO();
+        return new ScheduleDTO();
     }
 
     @GetMapping
     public List<ScheduleDTO> getAllSchedules() {
         var scheduleList = scheduleService.getAllSchedules();
-        var dtos = getScheduleDTOSFromSchedules(scheduleList);
-        return dtos;
-
+        return getScheduleDTOSFromSchedules(scheduleList);
     }
 
     @GetMapping("/pet/{petId}")
@@ -80,11 +81,11 @@ public class ScheduleController {
 
         var optionalSchedules = scheduleService.getScheduleForPet(petId);
         List<Schedule> scheduleList;
-        if(optionalSchedules.isPresent()){
+        if (optionalSchedules.isPresent()) {
             scheduleList = optionalSchedules.get();
             return getScheduleDTOSFromSchedules(scheduleList);
         }
-        throw new RuntimeException("No schedule exists for Pet  # "+ petId);
+        throw new RuntimeException("No schedule exists for Pet  # " + petId);
 
     }
 
@@ -92,46 +93,46 @@ public class ScheduleController {
     public List<ScheduleDTO> getScheduleForEmployee(@PathVariable long employeeId) {
         var optionalSchedules = scheduleService.getScheduleForEmployee(employeeId);
         List<Schedule> scheduleList;
-        if(optionalSchedules.isPresent()){
+        if (optionalSchedules.isPresent()) {
             scheduleList = optionalSchedules.get();
             return getScheduleDTOSFromSchedules(scheduleList);
         }
-        throw new RuntimeException("No schedule exists for employee # "+ employeeId);
+        throw new RuntimeException("No schedule exists for employee # " + employeeId);
     }
 
     @GetMapping("/customer/{customerId}")
     public List<ScheduleDTO> getScheduleForCustomer(@PathVariable long customerId) {
         var optionalSchedules = scheduleService.getScheduleForCustomer(customerId);
         List<Schedule> scheduleList;
-        if(optionalSchedules.isPresent()){
+        if (optionalSchedules.isPresent()) {
             scheduleList = optionalSchedules.get();
             return getScheduleDTOSFromSchedules(scheduleList);
         }
-        throw new RuntimeException("No schedule exists for customer # "+ customerId);
+        throw new RuntimeException("No schedule exists for customer # " + customerId);
 
     }
 
     private List<ScheduleDTO> getScheduleDTOSFromSchedules(List<Schedule> schedules) {
         List<ScheduleDTO> responseScheduleDTOS = new ArrayList<>();
-            for(Schedule schedule :schedules){
-                ScheduleDTO scheduleDTO = new ScheduleDTO();
-                scheduleDTO.setActivities(schedule.getActivities());
-                scheduleDTO.setDate(schedule.getDate());
+        for (Schedule schedule : schedules) {
+            ScheduleDTO scheduleDTO = new ScheduleDTO();
+            scheduleDTO.setActivities(schedule.getActivities());
+            scheduleDTO.setDate(schedule.getDate());
 
-                List<Long> empIds = new ArrayList<>();
-                var employees = schedule.getEmployees();
-                for (Employee employee: employees) empIds.add(employee.getId());
-                scheduleDTO.setEmployeeIds(empIds);
-
-
-                List<Long> petIds = new ArrayList<>();
-                var pets = schedule.getPets();
-                for (Pet pet: pets) petIds.add(pet.getId());
-                scheduleDTO.setPetIds(petIds);
+            List<Long> empIds = new ArrayList<>();
+            var employees = schedule.getEmployees();
+            for (Employee employee : employees) empIds.add(employee.getId());
+            scheduleDTO.setEmployeeIds(empIds);
 
 
-                responseScheduleDTOS.add(scheduleDTO);
-            }
+            List<Long> petIds = new ArrayList<>();
+            var pets = schedule.getPets();
+            for (Pet pet : pets) petIds.add(pet.getId());
+            scheduleDTO.setPetIds(petIds);
+
+
+            responseScheduleDTOS.add(scheduleDTO);
+        }
         return responseScheduleDTOS;
     }
 }

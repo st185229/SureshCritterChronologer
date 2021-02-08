@@ -1,7 +1,6 @@
 package com.udacity.jdnd.course3.critter.services;
 
 import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
-import com.udacity.jdnd.course3.critter.domain.user.Customer;
 import com.udacity.jdnd.course3.critter.persistence.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.persistence.PetRepository;
 import com.udacity.jdnd.course3.critter.persistence.ScheduleRepository;
@@ -32,19 +31,19 @@ public class ScheduleService {
         return scheduleRepository.findAll();
     }
 
-    public Optional<List<Schedule>> getScheduleForPet( long petId) {
+    public Optional<List<Schedule>> getScheduleForPet(long petId) {
 
-        return  scheduleRepository.getScheduleForPet(petId);
+        return scheduleRepository.getScheduleForPet(petId);
     }
 
 
     public Optional<List<Schedule>> getScheduleForEmployee(long employeeId) {
-       return scheduleRepository.getScheduleForEmployee(employeeId);
+        return scheduleRepository.getScheduleForEmployee(employeeId);
     }
 
 
-    public Optional<List<Schedule>> getScheduleForCustomer( long customerId) {
-      return scheduleRepository.getScheduleForCustomer(customerId);
+    public Optional<List<Schedule>> getScheduleForCustomer(long customerId) {
+        return scheduleRepository.getScheduleForCustomer(customerId);
 
 
     }

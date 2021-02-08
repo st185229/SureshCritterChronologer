@@ -2,9 +2,12 @@ package com.udacity.jdnd.course3.critter.controller;
 
 import com.udacity.jdnd.course3.critter.domain.pet.Pet;
 import com.udacity.jdnd.course3.critter.domain.user.*;
+import com.udacity.jdnd.course3.critter.exception.EntityNotFoundException;
 import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -28,6 +31,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO) {
         Customer customer = new Customer();
@@ -38,7 +42,7 @@ public class UserController {
         CustomerDTO responseCustomerDTO = new CustomerDTO();
 
         var petSet = savedCustomer.getPetSet();
-        if(petSet != null && petSet.size() >0){
+        if (petSet != null && petSet.size() > 0) {
             var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
             responseCustomerDTO.setPetIds(petIds);
         }
@@ -51,17 +55,26 @@ public class UserController {
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers() {
-        var customers = userService.getAllCustomers();
-        var customerDTOS = customers.stream().map(this::getCustomerDTO).collect(toList());
-        return customerDTOS;
+        try {
+            var customers = userService.getAllCustomers();
+            return customers.stream().map(this::getCustomerDTO).collect(toList());
+        } catch (EntityNotFoundException exec) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exec.getMessage(), exec);
+
+        }
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId) {
-        var savedCustomer = userService.findOwnerByPet(petId);
+        try {
+            var savedCustomer = userService.findOwnerByPet(petId);
 
-        CustomerDTO responseDTO = getCustomerDTO(savedCustomer);
-        return responseDTO;
+            return getCustomerDTO(savedCustomer);
+        } catch (EntityNotFoundException exec) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exec.getMessage(), exec);
+        } catch (javax.persistence.NoResultException exec) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No pet found, or orphaned Pet - # " + petId, exec);
+        }
     }
 
     private CustomerDTO getCustomerDTO(Customer savedCustomer) {
@@ -71,7 +84,7 @@ public class UserController {
         customerDTO.setPhoneNumber(savedCustomer.getPhoneNumber());
         customerDTO.setNotes(savedCustomer.getNotes());
         var petSet = savedCustomer.getPetSet();
-        if(petSet != null && petSet.size()>0){
+        if (petSet != null && petSet.size() > 0) {
             var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
             customerDTO.setPetIds(petIds);
         }
@@ -80,7 +93,6 @@ public class UserController {
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-
         Employee employee = new Employee();
         employee.setName(employeeDTO.getName());
         employee.setDaysAvailable(employeeDTO.getDaysAvailable());
@@ -94,38 +106,36 @@ public class UserController {
 
     @GetMapping("/customer/{id}")
     public CustomerDTO getCustomerById(@PathVariable long id) {
-        var customerDTO = new CustomerDTO();
-        var customer = userService.getCustomerById(id);
-        BeanUtils.copyProperties(customer, customerDTO);
-        customerDTO.setId(customer.getId());
-        var petSet = customer.getPetSet();
-        var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
-        customerDTO.setPetIds(petIds);
+        try {
+            var customerDTO = new CustomerDTO();
+            var customer = userService.getCustomerById(id);
+            BeanUtils.copyProperties(customer, customerDTO);
+            customerDTO.setId(customer.getId());
+            var petSet = customer.getPetSet();
+            var petIds = petSet.stream().map(Pet::getId).collect(Collectors.toList());
+            customerDTO.setPetIds(petIds);
 
-        return customerDTO;
-
+            return customerDTO;
+        } catch (EntityNotFoundException exec) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exec.getMessage(), exec);
+        }
     }
 
-    /*
-    @PostMapping("/employee/{employeeId}")
-    public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
-    }
-     */
-    // The above is replaced with GetMapping getEmployeeById
     @GetMapping("/employee/{id}")
-    public EmployeeDTO getEmployeeById(@PathVariable long id) {
-
-        var employeeDTO = new EmployeeDTO();
-        var employee = userService.getEmployeeById(id);
-        BeanUtils.copyProperties(employee, employeeDTO);
-        employeeDTO.setId(employee.getId());
-        return employeeDTO;
+    public EmployeeDTO getEmployeeById(@PathVariable long id) throws EntityNotFoundException {
+        try {
+            var employeeDTO = new EmployeeDTO();
+            var employee = userService.getEmployeeById(id);
+            BeanUtils.copyProperties(employee, employeeDTO);
+            employeeDTO.setId(employee.getId());
+            return employeeDTO;
+        } catch (EntityNotFoundException exec) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exec.getMessage(), exec);
+        }
     }
 
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-
         userService.upDateEmployeeAvailability(employeeId, daysAvailable);
 
     }
@@ -134,16 +144,18 @@ public class UserController {
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
 
 
-        List<Employee> availableEmployees =
-                userService.getAvailableEmployees(employeeRequestDTO);
+        try {
+            List<Employee> availableEmployees =
+                    userService.getAvailableEmployees(employeeRequestDTO);
 
-        return availableEmployees.stream().map(employee -> {
-            var employeeDTO = new EmployeeDTO();
-            BeanUtils.copyProperties(employee, employeeDTO);
-            employeeDTO.setId(employee.getId());
-            return employeeDTO;
-        }).collect(Collectors.toList());
-
+            return availableEmployees.stream().map(employee -> {
+                var employeeDTO = new EmployeeDTO();
+                BeanUtils.copyProperties(employee, employeeDTO);
+                employeeDTO.setId(employee.getId());
+                return employeeDTO;
+            }).collect(Collectors.toList());
+        } catch (EntityNotFoundException exec) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exec.getMessage(), exec);
+        }
     }
-
 }

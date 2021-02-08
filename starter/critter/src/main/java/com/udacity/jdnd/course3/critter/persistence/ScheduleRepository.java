@@ -1,4 +1,5 @@
 package com.udacity.jdnd.course3.critter.persistence;
+
 import com.udacity.jdnd.course3.critter.domain.schedule.Schedule;
 import org.springframework.stereotype.Repository;
 
@@ -16,23 +17,26 @@ public class ScheduleRepository {
         this.entityManager = entityManager;
     }
 
-    public Optional<Schedule> save(Schedule schedule){
+    public Optional<Schedule> save(Schedule schedule) {
         try {
             entityManager.persist(schedule);
             entityManager.flush();
-            return  Optional.of(schedule);
-        }catch (Exception e){
+            return Optional.of(schedule);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Optional.empty();
     }
+
     public Optional<Schedule> findById(Integer id) {
         Schedule schedule = entityManager.find(Schedule.class, id);
         return schedule != null ? Optional.of(schedule) : Optional.empty();
     }
+
     public List<Schedule> findAll() {
-        return entityManager.createQuery("select sch from Schedule sch",Schedule.class).getResultList();
+        return entityManager.createQuery("select sch from Schedule sch", Schedule.class).getResultList();
     }
+
     public void deleteById(Integer id) {
         // Retrieve the movie with this ID
         Schedule schedule = entityManager.find(Schedule.class, id);
@@ -42,9 +46,7 @@ public class ScheduleRepository {
                 entityManager.getTransaction().begin();
 
                 // Remove all references to this movie by superheroes
-                schedule.getPets().forEach(pet -> {
-                    pet.getScheduleSet().remove(schedule);
-                });
+                schedule.getPets().forEach(pet -> pet.getScheduleSet().remove(schedule));
 
                 // Now remove the movie
                 entityManager.remove(schedule);
@@ -56,29 +58,32 @@ public class ScheduleRepository {
             }
         }
     }
+
     public Optional<List<Schedule>> getScheduleForPet(Long petId) {
 
-        var searchScheduleQuery  = entityManager.createQuery("select schedule from Schedule schedule join fetch schedule.pets pc where pc.id =?1", Schedule.class);
-        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1,petId);
+        var searchScheduleQuery = entityManager.createQuery("select schedule from Schedule schedule join fetch schedule.pets pc where pc.id =?1", Schedule.class);
+        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1, petId);
         List<Schedule> schedules = parameterisedSearchQuery.getResultList();
-        return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
+        return schedules != null  ? Optional.of(schedules) : Optional.empty();
 
     }
+
     public Optional<List<Schedule>> getScheduleForEmployee(Long employeeId) {
 
-        var searchScheduleQuery  = entityManager.createQuery("select schedule from Schedule schedule join fetch schedule.employees es where es.id =?1", Schedule.class);
-        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1,employeeId);
+        var searchScheduleQuery = entityManager.createQuery("select schedule from Schedule schedule join fetch schedule.employees es where es.id =?1", Schedule.class);
+        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1, employeeId);
         List<Schedule> schedules = parameterisedSearchQuery.getResultList();
-        return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
+        return schedules != null  ? Optional.of(schedules) : Optional.empty();
 
     }
-    public Optional<List<Schedule>>  getScheduleForCustomer(Long customerID){
-        var searchScheduleQuery  = entityManager.createNativeQuery(
+
+    public Optional<List<Schedule>> getScheduleForCustomer(Long customerID) {
+        var searchScheduleQuery = entityManager.createNativeQuery(
                 "select sh.* from schedule sh, pet_schedule ps, pet pt, customer cust " +
                         "where sh.schedule_id = ps.schedule_id and pt.pet_id = ps.pet_id and pt.user_id = cust.user_id and cust.user_id = ?1", Schedule.class);
-        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1,customerID);
+        var parameterisedSearchQuery = searchScheduleQuery.setParameter(1, customerID);
         List<Schedule> schedules = parameterisedSearchQuery.getResultList();
-        return schedules != null || schedules.size()==0 ?Optional.of(schedules):Optional.empty();
+        return schedules != null  ? Optional.of(schedules) : Optional.empty();
 
     }
 

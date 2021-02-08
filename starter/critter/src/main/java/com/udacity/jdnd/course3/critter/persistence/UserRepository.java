@@ -18,20 +18,13 @@ import java.util.*;
 @Repository
 @Transactional
 public class UserRepository {
-    private PetRepository petRepository;
+    private final PetRepository petRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
     public UserRepository(PetRepository petRepository) {
         this.petRepository = petRepository;
     }
-
-    private final String PET_OWNER;
-
-    {
-        PET_OWNER = "SELECT  pet.customer from Pet pet where pet.id = ?1";
-    }
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     public Customer getCustomerByPetId(Long id) {
         var query = entityManager.createNativeQuery(
@@ -43,8 +36,8 @@ public class UserRepository {
         Customer customer = (Customer) query.getSingleResult();
         if (customer.getPetSet() == null) {
             query = entityManager.createQuery("SELECT pt from Pet pt where pt.id = ?1", Pet.class).setParameter(1, id);
-            var pets = query.getResultList();
-            HashSet targetSet = new HashSet<>(pets);
+            List pets = query.getResultList();
+            HashSet<Pet> targetSet = new HashSet<>((Collection<? extends Pet>) pets);
             customer.setPetSet(targetSet);
         }
         return customer;

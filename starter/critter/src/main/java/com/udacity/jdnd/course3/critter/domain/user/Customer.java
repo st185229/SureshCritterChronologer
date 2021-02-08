@@ -1,17 +1,24 @@
 package com.udacity.jdnd.course3.critter.domain.user;
 
 import com.udacity.jdnd.course3.critter.domain.pet.Pet;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.sql.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "CUSTOMER")
 public class Customer extends User {
+    @Column(name = "CONTACT_PHONE")
+    private String phoneNumber;
+    @Column(name = "NOTES")
+    private String notes;
+    @OneToMany(mappedBy = "customer")
+    private Set<Pet> petSet;
+
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -35,15 +42,6 @@ public class Customer extends User {
     public void setPetSet(Set<Pet> petSet) {
         this.petSet = petSet;
     }
-
-    @Column(name = "CONTACT_PHONE")
-    private String phoneNumber;
-
-    @Column(name = "NOTES")
-    private String notes;
-
-    @OneToMany(mappedBy = "customer")
-    private  Set<Pet> petSet;
 
     @Override
     public Date getCreatedOn() {

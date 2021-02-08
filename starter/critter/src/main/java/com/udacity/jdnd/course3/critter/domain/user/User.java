@@ -14,28 +14,18 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "USER_ID")
     private Long id;
+    @Column(name = "USER_NAME")
+    @Basic(optional = false)
+    private String name;
+    @CreationTimestamp
+    @Column(name = "CREATED_ON")
+    private Date createdOn;
 
     public User(Long id, String name, Date createdOn) {
         this.id = id;
         this.name = name;
         this.createdOn = createdOn;
     }
-
-    public Date getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    @Column(name = "USER_NAME")
-    @Basic(optional = false)
-    private String name;
-
-    @CreationTimestamp
-    @Column(name = "CREATED_ON")
-    private Date createdOn;
 
     public User() {
         id = null;
@@ -45,6 +35,14 @@ public abstract class User {
     public User(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
     }
 
     public long getId() {
